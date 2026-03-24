@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radierwear - Wear What You Believe</title>
+  <meta name="description" content="Streetwear that speaks your mind. Quality apparel for every side of the aisle." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0a0a0a;
+      --white:   #ffffff;
+      --red:     #e11d2e;
+      --gray-100:#f4f4f4;
+      --gray-300:#d1d1d1;
+      --gray-400:#9a9a9a;
+      --gray-700:#3a3a3a;
+      --font-display: 'Oswald', sans-serif;
+      --font-body:    'Inter', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--white);
+      color: var(--black);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ─── Top Announcement Bar ─────────────────────────────────── */
+    #top-bar {
+      background: var(--red);
+      color: var(--white);
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #top-bar-message {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    #edit-btn {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.2);
+      border: none;
+      color: white;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+      font-family: var(--font-display);
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #edit-btn:hover { background: rgba(0,0,0,0.4); }
+
+    /* Edit modal */
+    #edit-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    #edit-modal.open { display: flex; }
+    #edit-modal-box {
+      background: white;
+      border: 2px solid var(--black);
+      padding: 2rem;
+      width: 90%;
+      max-width: 480px;
+    }
+    #edit-modal-box h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    #edit-modal-box input {
+      width: 100%;
+      border: 2px solid var(--black);
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: var(--font-body);
+      margin-bottom: 1rem;
+      outline: none;
+    }
+    #edit-modal-box input:focus { border-color: var(--red); }
+    #edit-modal-box .btn-row { display: flex; gap: 0.75rem; }
+    #edit-modal-box button {
+      flex: 1;
+      padding: 0.75rem;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 2px solid var(--black);
+    }
+    #save-msg-btn { background: var(--black); color: white; }
+    #cancel-msg-btn { background: white; color: var(--black); }
+
+    /* ─── Site Header ──────────────────────────────────────────── */
+    header {
+      background: var(--white);
+      border-bottom: 2px solid var(--black);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    header .inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 5rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo span {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--red);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s;
+    }
+
+    nav a:hover::after { transform: scaleX(1); }
+    nav a:hover { color: var(--red); }
+
+    .header-icons { display: flex; gap: 0.5rem; }
+
+    .header-icons button {
+      padding: 0.5rem;
+      font-size: 1.3rem;
+      position: relative;
+      transition: background 0.15s;
+    }
+
+    .header-icons button:hover { background: var(--gray-100); }
+
+    .cart-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+    }
+
+    /* ─── Hero ─────────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 70vh;
+      min-height: 520px;
+      max-height: 800px;
+      overflow: hidden;
+      background: #000;
+      border-bottom: 2px solid var(--black);
+    }
+
+    #hero img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.75;
+    }
+
+    #hero-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.45) 55%, transparent 100%);
+    }
+
+    #hero-content {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    #hero-text-box {
+      max-width: 560px;
+      background: rgba(0,0,0,0.88);
+      padding: 3rem;
+      border-left: 8px solid var(--red);
+      animation: slideIn 0.7s ease-out both;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    #hero-text-box h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      color: var(--white);
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.25rem;
+    }
+
+    #hero-text-box p {
+      color: #ccc;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .btn-hero {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 2px solid var(--white);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-hero:hover { background: var(--gray-300); }
+
+    /* ─── Category Nav ─────────────────────────────────────────── */
+    #category-nav {
+      background: var(--white);
+      border-bottom: 2px solid var(--black);
+      position: sticky;
+      top: 80px;
+      z-index: 30;
+    }
+
+    #category-nav .inner {
+      display: flex;
+      overflow-x: auto;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      scrollbar-width: none;
+    }
+
+    #category-nav .inner::-webkit-scrollbar { display: none; }
+
+    .cat-btn {
+      white-space: nowrap;
+      padding: 0.6rem 1.5rem;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 2px solid var(--black);
+      background: var(--white);
+      color: var(--black);
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .cat-btn:hover {
+      background: var(--gray-100);
+      transform: translateY(-2px);
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .cat-btn.active {
+      background: var(--black);
+      color: var(--white);
+      box-shadow: 3px 3px 0 var(--red);
+      transform: translateY(-2px);
+    }
+
+    /* ─── Product Grid ─────────────────────────────────────────── */
+    #shop {
+      padding: 4rem 0 6rem;
+    }
+
+    #shop .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+      padding-bottom: 1rem;
+      border-bottom: 4px solid var(--black);
+    }
+
+    #category-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    #product-count {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--gray-400);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    #product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      border: 2px solid var(--black);
+      background: var(--white);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 6px 6px 0 var(--black);
+    }
+
+    .product-card img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .product-card-body {
+      padding: 1rem;
+    }
+
+    .product-card-body h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.3rem;
+    }
+
+    .product-card-body .cat-tag {
+      font-size: 0.7rem;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-card-body .price {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--red);
+    }
+
+    .btn-add {
+      display: block;
+      width: 100%;
+      margin-top: 0.75rem;
+      padding: 0.6rem;
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 2px solid var(--black);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-add:hover { background: var(--red); border-color: var(--red); }
+
+    #no-products {
+      display: none;
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 6rem 2rem;
+      border: 2px dashed var(--gray-300);
+    }
+
+    #no-products h3 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      text-transform: uppercase;
+      color: var(--gray-400);
+    }
+
+    /* ─── Footer ───────────────────────────────────────────────── */
+    footer {
+      background: var(--black);
+      color: var(--white);
+      border-top: 8px solid var(--red);
+      padding: 5rem 0 2.5rem;
+      margin-top: auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.5fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .footer-tagline {
+      color: #888;
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 320px;
+    }
+
+    .footer-col h4 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-col ul { list-style: none; }
+
+    .footer-col ul li {
+      margin-bottom: 0.9rem;
+      color: #aaa;
+      font-size: 0.95rem;
+    }
+
+    .footer-col ul li a {
+      color: #aaa;
+      transition: color 0.15s;
+    }
+
+    .footer-col ul li a:hover { color: white; }
+
+    .social-links {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+
+    .social-btn {
+      width: 44px;
+      height: 44px;
+      border: 2px solid #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: #aaa;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      text-decoration: none;
+    }
+
+    .social-btn:hover {
+      background: var(--red);
+      border-color: var(--red);
+      color: white;
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: #555;
+      font-size: 0.85rem;
+    }
+
+    .footer-bottom a { color: #555; transition: color 0.15s; }
+    .footer-bottom a:hover { color: white; }
+    .footer-bottom-links { display: flex; gap: 1.5rem; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Announcement Bar ─────────────────────────────────── -->
+  <div id="top-bar">
+    <div id="top-bar-message">FREE SHIPPING ON ORDERS OVER $50 — SHOP THE LATEST RADIERWEAR STYLES!</div>
+    <button id="edit-btn" onclick="openEdit()">✏ EDIT</button>
+  </div>
+
+  <!-- Edit Message Modal -->
+  <div id="edit-modal">
+    <div id="edit-modal-box">
+      <h3>Edit Announcement</h3>
+      <input id="msg-input" type="text" placeholder="Enter your announcement..." />
+      <div class="btn-row">
+        <button id="save-msg-btn" onclick="saveMessage()">Save</button>
+        <button id="cancel-msg-btn" onclick="closeEdit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Site Header ──────────────────────────────────────── -->
+  <header>
+    <div class="container inner">
+      <a href="#" class="logo">
+        <span>Radierwear</span>
+      </a>
+      <nav>
+        <a href="#">New Arrivals</a>
+        <a href="#">Tees</a>
+        <a href="#">Accessories</a>
+        <a href="#">About</a>
+      </nav>
+      <div class="header-icons">
+        <button title="Search">🔍</button>
+        <button title="Cart" style="position:relative">
+          🛍
+          <span class="cart-dot"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Hero ────────────────────────────────────────────── -->
+  <section id="hero">
+    <img
+      src="https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=1600&q=80"
+      alt="Radierwear hero banner"
+    />
+    <div id="hero-gradient"></div>
+    <div id="hero-content" class="container">
+      <div id="hero-text-box">
+        <h1>Wear What You Believe</h1>
+        <p>T-shirts that say something. Shop the full Radierwear collection.</p>
+        <a href="#shop" class="btn-hero">Shop Collection</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Category Nav ─────────────────────────────────────── -->
+  <div id="category-nav">
+    <div class="container inner" style="max-width:1400px">
+      <button class="cat-btn active" data-cat="Shop All">Shop All</button>
+      <button class="cat-btn" data-cat="Geek">Geek</button>
+      <button class="cat-btn" data-cat="Fun">Fun</button>
+      <button class="cat-btn" data-cat="2A">2A</button>
+      <button class="cat-btn" data-cat="Left Leaning">Left Leaning</button>
+      <button class="cat-btn" data-cat="Right Leaning">Right Leaning</button>
+      <button class="cat-btn" data-cat="Stuck In The Middle">Stuck In The Middle</button>
+    </div>
+  </div>
+
+  <!-- ── Product Grid ──────────────────────────────────────── -->
+  <section id="shop">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div id="category-title">Shop All</div>
+          <div id="product-count">16 Items</div>
+        </div>
+      </div>
+      <div id="product-grid">
+        <!-- Products injected by JS -->
+        <div id="no-products">
+          <h3>No products found</h3>
+          <p style="color:#999;margin-top:0.5rem">Try selecting a different category.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ───────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Brand -->
+        <div>
+          <a href="#" class="footer-brand-name">Radierwear</a>
+          <p class="footer-tagline">
+            Streetwear that speaks your mind. Quality apparel for every side of the aisle, without compromise. Wear your truth.
+          </p>
+        </div>
+
+        <!-- About Us -->
+        <div class="footer-col">
+          <h4>About Us</h4>
+          <ul>
+            <li><a href="#">Our Story</a></li>
+            <li><a href="#">Store Locations</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Sustainability</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Us -->
+        <div class="footer-col">
+          <h4>Contact Us</h4>
+          <ul>
+            <li><a href="mailto:support@radierwear.com">✉ support@radierwear.com</a></li>
+            <li>1-800-RADIER-W</li>
+            <li>123 Streetwear Ave, NY 10012</li>
+          </ul>
+          <div class="social-links">
+            <a href="#" class="social-btn" title="Instagram">📸</a>
+            <a href="#" class="social-btn" title="Twitter/X">🐦</a>
+            <a href="#" class="social-btn" title="Facebook">👍</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> Radierwear. All rights reserved.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ─── Product Data ─────────────────────────────────────── */
+    const PRODUCTS = [
+      { id:1,  name:"Binary Brain Tee",       price:29.99, category:"Geek",              img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80" },
+      { id:2,  name:"404 Not Found",           price:27.99, category:"Geek",              img:"https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=600&q=80" },
+      { id:3,  name:"Ctrl+Alt+Defeat",         price:28.99, category:"Geek",              img:"https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&q=80" },
+      { id:4,  name:"Coffee & Code",           price:26.99, category:"Geek",              img:"https://images.unsplash.com/photo-1543101904-89e1e006b3df?w=600&q=80" },
+      { id:5,  name:"Party Animal Tee",        price:24.99, category:"Fun",               img:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&q=80" },
+      { id:6,  name:"Unicorn Mode",            price:25.99, category:"Fun",               img:"https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80" },
+      { id:7,  name:"Good Vibes Only",         price:22.99, category:"Fun",               img:"https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80" },
+      { id:8,  name:"Radierwear Essential",    price:23.99, category:"Fun",               img:"https://images.unsplash.com/photo-1561861422-a549073e547a?w=600&q=80" },
+      { id:9,  name:"2nd Amendment Classic",   price:29.99, category:"2A",                img:"https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80" },
+      { id:10, name:"Molon Labe Tee",          price:31.99, category:"2A",                img:"https://images.unsplash.com/photo-1554568218-0f1715e72254?w=600&q=80" },
+      { id:11, name:"Progressive Power",       price:26.99, category:"Left Leaning",      img:"https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80" },
+      { id:12, name:"Science Is Real",         price:27.99, category:"Left Leaning",      img:"https://images.unsplash.com/photo-1594938298603-c8148c4a3584?w=600&q=80" },
+      { id:13, name:"Classic Conservative",   price:28.99, category:"Right Leaning",     img:"https://images.unsplash.com/photo-1527719327859-c6ce80353573?w=600&q=80" },
+      { id:14, name:"Don't Tread on Me",       price:29.99, category:"Right Leaning",     img:"https://images.unsplash.com/photo-1622445272461-c6580cab8755?w=600&q=80" },
+      { id:15, name:"Can't We All Get Along",  price:24.99, category:"Stuck In The Middle", img:"https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&q=80" },
+      { id:16, name:"Both Sides Now",          price:25.99, category:"Stuck In The Middle", img:"https://images.unsplash.com/photo-1488161628813-04466f872be2?w=600&q=80" },
+    ];
+
+    /* ─── Render Products ──────────────────────────────────── */
+    let currentCategory = "Shop All";
+
+    function renderProducts(cat) {
+      currentCategory = cat;
+      const filtered = cat === "Shop All" ? PRODUCTS : PRODUCTS.filter(p => p.category === cat);
+      const grid = document.getElementById("product-grid");
+      const noProducts = document.getElementById("no-products");
+      const title = document.getElementById("category-title");
+      const count = document.getElementById("product-count");
+
+      title.textContent = cat;
+      count.textContent = filtered.length + (filtered.length === 1 ? " Item" : " Items");
+
+      // Remove old cards (keep the no-products placeholder)
+      Array.from(grid.querySelectorAll(".product-card")).forEach(el => el.remove());
+
+      if (filtered.length === 0) {
+        noProducts.style.display = "block";
+        return;
+      }
+
+      noProducts.style.display = "none";
+
+      filtered.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" loading="lazy" />
+          <div class="product-card-body">
+            <p class="cat-tag">${p.category}</p>
+            <h3>${p.name}</h3>
+            <div class="price">$${p.price.toFixed(2)}</div>
+            <button class="btn-add">Add to Cart</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* ─── Category Buttons ─────────────────────────────────── */
+    document.querySelectorAll(".cat-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderProducts(btn.dataset.cat);
+      });
+    });
+
+    /* ─── Announcement Bar Edit ────────────────────────────── */
+    function openEdit() {
+      document.getElementById("msg-input").value = document.getElementById("top-bar-message").textContent;
+      document.getElementById("edit-modal").classList.add("open");
+    }
+
+    function closeEdit() {
+      document.getElementById("edit-modal").classList.remove("open");
+    }
+
+    function saveMessage() {
+      const val = document.getElementById("msg-input").value.trim();
+      if (val) document.getElementById("top-bar-message").textContent = val;
+      closeEdit();
+    }
+
+    /* Close modal on backdrop click */
+    document.getElementById("edit-modal").addEventListener("click", e => {
+      if (e.target === document.getElementById("edit-modal")) closeEdit();
+    });
+
+    /* ─── Footer Year ──────────────────────────────────────── */
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    /* ─── Init ─────────────────────────────────────────────── */
+    renderProducts("Shop All");
+  </script>
+</body>
+</html>
